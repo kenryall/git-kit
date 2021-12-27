@@ -19,6 +19,7 @@ public final class Git: Shell {
         case clone(url: String)
         case checkout(branch: String)
         case log(Int? = nil)
+		case logJSON(format: String)
         case push(remote: String? = nil, branch: String? = nil)
         case pull(remote: String? = nil, branch: String? = nil)
         case merge(branch: String)
@@ -51,7 +52,10 @@ public final class Git: Shell {
                 if let n = n {
                     params.append("-\(n)")
                 }
-            case .push(let remote, let branch):
+			case .logJSON(let format):
+				params = [Command.log.rawValue]
+				params.append("--pretty=format:\(format)")
+           case .push(let remote, let branch):
                 params = [Command.push.rawValue]
                 if let remote = remote {
                     params.append(remote)
@@ -189,7 +193,7 @@ public final class Git: Shell {
     
     // MARK: - public api
 
-    /// work directory, if peresent a directory change will occur before running any Git commands
+    /// work directory, if present a directory change will occur before running any Git commands
     ///
     /// NOTE: if the git init command is called with a non-existing path, directories
     /// presented in the path string will be created recursively
